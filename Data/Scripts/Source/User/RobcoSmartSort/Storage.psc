@@ -1,4 +1,4 @@
-Scriptname RobcoSmartStash:Storage extends Quest
+Scriptname RobcoSmartSort:Storage extends Quest
 
 FormList Property FormListCacheIDs Auto Const Mandatory
 FormList Property SortingModules Auto Const Mandatory

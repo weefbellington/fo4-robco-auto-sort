@@ -1,4 +1,4 @@
-Scriptname RobcoMagicStash:MainController extends Quest
+Scriptname RobcoSmartSort:MainController extends Quest
 
 FormList[] Property AddItems Auto Const Mandatory
 Perk[] Property AddPerks Auto Const Mandatory 
@@ -9,10 +9,10 @@ int iStage_Started = 1 Const
 int iStage_StartupComplete = 2 Const
 int iTimerID_QuestStartupComplete = 100 Const
 
-RobcoSmartStash:DebugLog Log
+DebugLog Log
 
 Event OnInit()
-	Log = RobcoSmartStash:DebugLog.Open(DebugQuest)
+	Log = RobcoSmartSort:DebugLog.Open(DebugQuest)
 EndEvent
 
 Event OnStageSet(Int auiStageID, Int auiItemID)

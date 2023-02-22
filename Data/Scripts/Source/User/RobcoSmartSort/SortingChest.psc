@@ -1,4 +1,4 @@
-Scriptname RobcoMagicStash:SortingChest extends ObjectReference
+Scriptname RobcoSmartSort:SortingChest extends ObjectReference
 
 Group Forms
     Form Property kTempContainer Auto Const Mandatory
@@ -24,11 +24,11 @@ SortingModuleContainer kHolotapeContainer = None
 bool bIsActivated = false
 Actor kPlayer
 
-RobcoSmartStash:DebugLog Log
+DebugLog Log
 
 Event OnInit()
     kPlayer = Game.GetPlayer()
-    Log = RobcoSmartStash:DebugLog.Open(DebugQuest)
+    Log = RobcoSmartSort:DebugLog.Open(DebugQuest)
 EndEvent
 
 state Processing

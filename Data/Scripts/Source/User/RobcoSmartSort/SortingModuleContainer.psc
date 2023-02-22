@@ -1,4 +1,4 @@
-Scriptname RobcoMagicStash:SortingModuleContainer extends ObjectReference
+Scriptname RobcoSmartSort:SortingModuleContainer extends ObjectReference
 
 Group Sounds
     Sound Property kErrorSound Auto Const Mandatory
@@ -18,8 +18,8 @@ Group Other
 EndGroup
 
 Actor Player
-RobcoSmartStash:Storage Storage
-RobcoSmartStash:DebugLog Log
+Storage Storage
+DebugLog Log
 
 Struct Filter
     Form Module
@@ -48,7 +48,7 @@ Event OnInit()
 EndEvent
 
 Function InitVariables()
-    Log = RobcoSmartStash:DebugLog.Open(DebugQuest)
+    Log = RobcoSmartSort:DebugLog.Open(DebugQuest)
     player = Game.GetPlayer()
     DISPLAY_NAME_PREFIX = "Robco Smart Sort - "
     DEFAULT_TITLE = "Filtered Items"
@@ -59,7 +59,7 @@ EndFunction
 
 Function InitStorage()
     DS:IntSet.Create(FavoritesCache)
-    Storage = RobcoSmartStash:Storage.Open(StorageQuest)
+    Storage = RobcoSmartSort:Storage.Open(StorageQuest)
     if (Storage == None)
         Log.Info("Storage intialization failed (already initialized?)")
     else

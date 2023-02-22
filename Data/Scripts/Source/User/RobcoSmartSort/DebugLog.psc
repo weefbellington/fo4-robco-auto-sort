@@ -1,10 +1,10 @@
-Scriptname RobcoSmartStash:DebugLog extends Quest
+Scriptname RobcoSmartSort:DebugLog extends Quest
 
 GlobalVariable Property DebugFlag Auto Const
 
 String UserFilename = "RobcoSmartSort"
 
-RobcoSmartStash:DebugLog Function Open(Quest debugQuest) global
+DebugLog Function Open(Quest debugQuest) global
     return debugQuest as DebugLog
 EndFunction
 
