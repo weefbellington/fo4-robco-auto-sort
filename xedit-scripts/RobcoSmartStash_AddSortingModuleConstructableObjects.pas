@@ -1,4 +1,4 @@
-unit RobcoSmartSort_CreateConstructableObject;
+unit RobcoSmartStash_AddSortingModuleConstructableObjects;
 
 interface
 uses xEditAPI, xEditExtensions, Classes, SysUtils, StrUtils, Windows, ScriptUtilities;

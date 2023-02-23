@@ -2,6 +2,7 @@ Scriptname RobcoSmartSort:Storage extends Quest
 
 FormList Property FormListCacheIDs Auto Const Mandatory
 FormList Property SortingModules Auto Const Mandatory
+Quest Property DebugQuest Auto Const Mandatory
 
 Struct Cache
     Form module
@@ -9,11 +10,23 @@ Struct Cache
 	Keyword Includes
 EndStruct
 
+DebugLog Log
 Cache[] Caches
 
 int iStage_Started = 1 Const
 int iStage_StartupComplete = 2 Const
 int iTimerID_QuestStartupComplete = 100 Const
+
+Event OnInit()
+    RegisterForRemoteEvent(Game.GetPlayer(), "OnPlayerLoadGame")
+    Log = RobcoSmartSort:DebugLog.Open(DebugQuest)
+EndEvent
+
+Event Actor.OnPlayerLoadGame(Actor akSender)
+    Reset()
+    Start()
+    SetStage(iStage_Started)
+EndEvent
 
 Event OnStageSet(Int auiStageID, Int auiItemID)
 	if(auiStageID == iStage_Started)
@@ -43,7 +56,6 @@ EndFunction
 
 Function InitCaches()
 	Keyword[] cacheIDs = ExtractCacheIDs(FormListCacheIDs)
-    Debug.Notification("Got " + cacheIDs.Length + "Cache IDs")
     Caches = CreateCaches(cacheIDs)
 EndFunction
 
@@ -87,25 +99,28 @@ Cache Function CreateCache(Form module, Keyword[] cacheIDs, int excludesIndex, i
 	Cache cache = new Cache
     cache.module = module
 	cache.Excludes = cacheIDs[excludesIndex]
-	Cache.Includes = cacheIDs[includesIndex]
+	cache.Includes = cacheIDs[includesIndex]
 
-    bool createdExcludes = DS:IntSet.Create(cache.Excludes)
-    bool createdIncludes = DS:IntSet.Create(cache.Includes)
-
-    if (createdIncludes && createdExcludes)
-        Debug.Notification("Excludes cache creation success. Size: " + DS:IntSet.Size(cache.Excludes))
-        Debug.Notification("Includes cache creation success. Size: " + DS:IntSet.Size(cache.Includes))
-    else
-        Debug.Notification("Cache creation failure")
-    endif
+    InitializeSetDataStructure(cache.Excludes, module.GetName())
+    InitializeSetDataStructure(cache.Includes, module.GetName())
 
 	return cache
+EndFunction
+
+Function InitializeSetDataStructure(Keyword kywd, String moduleName)
+    if DS:IntSet.Create(kywd)
+        Log.Info("Cache initialized for module: " + moduleName, notification = true)
+    else
+        Log.Info("Cache reset for module: " + moduleName, notification = true)
+        DS:IntSet.Clear(kywd)
+    endif
+    
 EndFunction
 
 Cache Function CacheForModule(Form module)
     int index = Caches.FindStruct("module", module)
     if (index < 0)
-        Debug.Notification("WARNING: cache not found for module: " + module.GetName())
+        Log.Warning("WARNING: cache not found for module: " + module.GetName(), notification = true)
     endif
     return Caches[index]
 EndFunction

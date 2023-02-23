@@ -1,7 +1,8 @@
-unit RobcoSmartSort_ConvertContainersToActivators;
+unit RobcoSmartStash_AddSmartSortActivators;
 
 interface
-uses  xEditAPI, xEditExtensions, Classes, SysUtils, StrUtils, Windows, ScriptUtilities;
+//uses xEditAPI, xEditExtensions, Classes, SysUtils, StrUtils, Windows;
+uses xEditAPI, xEditExtensions, Classes, SysUtils, StrUtils, Windows, Vcl.CheckLst, Vcl.Forms;
 
 implementation
 
@@ -13,9 +14,9 @@ var TempCONT, ModuleCONT: string;
 var DebugQUST: string;
 
 const
-  FALLOUT_4_ESM_NAME = 'Fallout4.esm';
-  PLUGIN_ESP_NAME = 'Robco Smart Stash.esp';
-  TARGET_ESP_NAME = 'Robco Smart Sort - Base Game Containers.esp';
+  FALLOUT_ESM_NAME = 'Fallout4.esm';
+  FALLOUT_EXE_NAME = 'Fallout4.exe';
+  PLUGIN_ESP_NAME = 'Robco Smart Sort.esp';
 const
   PLUGIN_EDID_PREFIX = 'robco_smart_sort_';
   ACTI_EDID_FORMAT = PLUGIN_EDID_PREFIX + 'Activator_%s';
@@ -34,7 +35,7 @@ const
 const
   QUST_DEBUG = PLUGIN_EDID_PREFIX + 'DebugQuest';
 const
-  SCRIPT_SORTING_CHEST = 'RobcoMagicStash:SortingChest';
+  SCRIPT_SORTING_CHEST = 'RobcoSmartSort:SortingChest';
 const
   ACTI_NAME_SUFFIX = ' (Smart Sort)';
   ACTI_ATTX_OVERRIDE = 'Open';
@@ -42,7 +43,58 @@ const
 Function FindMainRecord(baseFile: IInterface; grup: string; recordID: string): IInterface;
 begin
   Result := WinningOverride(MainRecordByEditorID(GroupBySignature(baseFile, grup), recordID));
-end; 
+end;
+
+Function IsFalloutExe(fileName: string): boolean;
+begin
+    Result := fileName = FALLOUT_EXE_NAME;
+end;
+
+Function IsFalloutESM(fileName: string): boolean;
+begin
+    Result := fileName = FALLOUT_ESM_NAME;
+end;
+
+Function IsPluginESP(fileName: string): boolean;
+begin
+  Result := fileName = PLUGIN_ESP_NAME;
+end;
+
+Function SelectTargetFile(): IInterface;
+var
+  frm: TForm;
+  clb: TCheckListBox;
+  iFile: IInterface;
+  iFileName: string;
+  i: integer;
+begin
+  frm := frmFileSelect;
+  try
+    frm.Caption := 'Select a plugin to add files into';
+    clb := TCheckListBox(frm.FindComponent('CheckListBox1'));
+
+    for i := 0 to FileCount()-1 do begin
+      iFile := FileByIndex(i);
+      iFileName := GetFileName(iFile);
+      if not isFalloutExe(iFileName) and not isFalloutESM(iFileName) and not isPluginEsp(iFileName) then begin
+        clb.Items.InsertObject(0, iFileName, iFile);
+      end;
+    end;
+    if frm.ShowModal <> mrOk then begin
+      Result := nil;
+      Exit;
+    end;
+    for i := 0 to clb.Items.Count do begin
+      if clb.Checked[i] then begin
+        Result := ObjectToElement(clb.Items.Objects[i]);
+        Break;
+      end;
+    end;
+  finally
+    frm.Free;
+  end;
+end;
+
 
 Procedure ScanForFiles();
 var
@@ -51,19 +103,16 @@ var
 begin
   for i := 0 to FileCount - 1 do begin
     currentFile := FileByIndex(i);
-    if GetFileName(currentFile) = FALLOUT_4_ESM_NAME then begin
+    if GetFileName(currentFile) = FALLOUT_ESM_NAME then begin
       FalloutESM := currentFile;
       AddMessage('Found Fallout4.esm');
-    end
-    else if GetFileName(currentFile) = TARGET_ESP_NAME then begin
-      TargetESP := currentFile;
-      AddMessage('Found target file');
     end
     else if GetFileName(currentFile) = PLUGIN_ESP_NAME then begin
       PluginESP := currentFile;
       AddMessage('Found plugin source file');
     end;
   end;
+  TargetESP := SelectTargetFile();
 end;
 
 Procedure ResolveIDs();
@@ -142,7 +191,7 @@ begin
   SetElementEditValues(e, 'EDID', id);
 end;
 
-Function CopyElement(element: IInterface; editorID: string): IInterface;
+Function CopyRecordToTarget(element: IInterface; editorID: string): IInterface;
 var
   copy: IInterface;
 begin
@@ -154,6 +203,21 @@ end;
 Procedure LinkConstructableObjectTo(cobj: IInterface; cnam: IInterface);
 begin
   SetElementEditValues(cobj, 'CNAM', BaseName(cnam));
+end;
+
+Procedure CopyProperties(source: IInterface; target: IInterface);
+  var
+    sourceProperties, targetProperties, sourceProperty: IInterface;
+    i: integer;
+begin
+  sourceProperties := Properties(source);
+  if not Assigned(sourceProperties) then Exit;
+
+  targetProperties := Add(target, 'PRPS', true);
+  for i := 0 to ElementCount(sourceProperties)-1 do begin
+    sourceProperty := ElementByIndex(sourceProperties, i);
+    ElementAssign(targetProperties, HighInteger, sourceProperty, false);
+  end;
 end;
 
 Function CreateActivatorFromContainer(container: IInterface): IInterface;
@@ -170,8 +234,9 @@ begin
   AddKeywordData(activator, ActivatorKYWD);
   CopyModelData(container, activator);
   CopyPreviewTransform(container, activator);
+  CopyProperties(container, activator);
 
-  AddScripts(container, activator);;
+  AddScripts(container, activator);
 
   Result := activator;
 end;
@@ -199,8 +264,8 @@ begin
     if Signature(linkedForm) = 'CONT' then hasLinkedContainer := true;
   end;
   if hasLinkedContainer then begin
-    cobj := CopyElement(cobj, Format(COBJ_EDID_FORMAT, [EditorID(cobj)]));
-    flst := CopyElement(flst, Format(FLST_EDID_FORMAT, [EditorID(flst)]));
+    cobj := CopyRecordToTarget(cobj, Format(FLST_EDID_FORMAT, [EditorID(cobj)]));
+    flst := CopyRecordToTarget(flst, Format(FLST_EDID_FORMAT, [EditorID(flst)]));
     seev(flst, 'FULL', geev(flst, 'FULL') + ACTI_NAME_SUFFIX);
     LinkConstructableObjectTo(cobj, flst);
     lnam := ElementByPath(flst, 'LNAM');
@@ -231,11 +296,11 @@ begin
     flist := cnam;
     ProcessConstructableFormList(cobj, flist);
   end;
-  
+
   if Signature(cnam) = 'CONT' then begin
     cont := cnam;
     acti := CreateActivatorFromContainer(cont);
-    cobj := CopyElement(cobj, Format(COBJ_EDID_FORMAT, ['Activator_' + EditorID(cont)]));
+    cobj := CopyRecordToTarget(cobj, Format(COBJ_EDID_FORMAT, ['Activator_' + EditorID(cont)]));
     LinkConstructableObjectTo(cobj, acti);
   end;
 end;
