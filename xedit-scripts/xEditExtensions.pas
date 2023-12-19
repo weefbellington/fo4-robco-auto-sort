@@ -6,6 +6,9 @@ uses xEditAPI, Classes, SysUtils, StrUtils, Windows;
 
 Function geev(e: IInterface; ip: string): string;
 Procedure seev(e: IInterface; ip: string; val: string);
+
+Function RemoveIfAssigned(parent: IInterface; path: string): boolean;
+
 Procedure ApplyEditorID(e: IInterface; id: string);
 Procedure ApplyName(e: IInterface; name: string);
 
@@ -19,6 +22,8 @@ Procedure ApplyDefaultMarkerColor(e: IInterface);
 Function GetFileHeader(fileObj: IInterface): IInterface;
 Function HeaderNextObjectID(fileObj: IInterface): string;
 Procedure SetHeaderNextObjectID(fileObj: IInterface; id: string);
+
+Procedure CopyRecordHeaderFlags(source: IInterface; target: IInterface);
 
 Function StringValue(b: boolean): string;
 Function GetContainerDisplayName(source: IInterface): string;
@@ -61,6 +66,18 @@ end;
 procedure seev(e: IInterface; ip: string; val: string);
 begin
   SetEditValue(ElementByPath(e, ip), val);
+end;
+
+Function RemoveIfAssigned(parent: IInterface; path: string): boolean;
+var
+  element: IInterface;
+begin
+  Result := false;
+  element := ElementByPath(parent, path);
+  if Assigned(element) then begin
+    Remove(element);
+    Result := true;
+  end;
 end;
 
 Procedure ApplyActivateTextOverride(e: IInterface; text: string);
@@ -112,6 +129,7 @@ end;
 
 Procedure AddKeywordData(e: IInterface; keyword: IInterface);
 begin
+  RemoveIfAssigned(e, 'KWDA');
   Add(e, 'KWDA', true);
   seev(e, 'KWDA\[0]', BaseName(keyword));
 end;
@@ -149,7 +167,7 @@ begin
   seev(header, 'HEDR\Next Object ID', id);
 end;
 
-Procedure CopyHeaderFlags(source: IInterface; target: IInterface);
+Procedure CopyRecordHeaderFlags(source: IInterface; target: IInterface);
 var
   sourceFlags: IInterface;
   targetFlags: IInterface;
@@ -220,7 +238,7 @@ var
   obnd_cont, obnd_acti: IInterface;
 begin
   // Add model
-
+  RemoveIfAssigned(target, 'Model');
   model := Add(target, 'Model', true);
   if Assigned(ElementByPath(source, 'Model\MODL')) then Add(model, 'MODL', true);
   if Assigned(ElementByPath(source, 'Model\MODC')) then Add(model, 'MODC', true);
@@ -249,6 +267,8 @@ Function AddScript(mainRecord: IInterface; scriptName: string): IInterface;
 var
   vmad, scripts, script, properties: IInterface;
 begin
+
+  RemoveIfAssigned(mainRecord, 'VMAD');
   vmad := Add(mainRecord, 'VMAD', true);
   seev(vmad, 'Version', '6');
   seev(vmad, 'Object Format', '2');

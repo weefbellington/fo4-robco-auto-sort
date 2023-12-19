@@ -6,39 +6,28 @@ uses xEditAPI, xEditExtensions, Classes, SysUtils, StrUtils, Windows, Vcl.CheckL
 
 implementation
 
-var FalloutESM, PluginESP, TargetESP: IInterface;
-var ActivatorGRUP, ConstructableGRUP: IInterface;
-var ActivatorKYWD, WorkshopScrapFilterKYWD: IInterface;
-var ButtonSNDR, SortSNDR, ProcessingSNDR: string;
-var TempCONT, ModuleCONT: string;
-var DebugQUST: string;
-
 const
   FALLOUT_ESM_NAME = 'Fallout4.esm';
   FALLOUT_EXE_NAME = 'Fallout4.exe';
-  PLUGIN_ESP_NAME = 'Robco Smart Sort.esp';
+  PLUGIN_ESP_NAME = 'Robco Auto Sort.esp';
 const
-  PLUGIN_EDID_PREFIX = 'robco_smart_sort_';
-  ACTI_EDID_FORMAT = PLUGIN_EDID_PREFIX + 'Activator_%s';
-  COBJ_EDID_FORMAT = PLUGIN_EDID_PREFIX+ 'co_%s';
-  FLST_EDID_FORMAT = PLUGIN_EDID_PREFIX + '%s';
+  PLUGIN_EDID_PREFIX = 'robco_auto_sort_';
+  ACTI_EDID_FORMAT = PLUGIN_EDID_PREFIX + 'acti_%s';
+  COBJ_EDID_FORMAT = PLUGIN_EDID_PREFIX+ 'cobj_%s';
+  FLST_EDID_FORMAT = PLUGIN_EDID_PREFIX + 'flst_%s';
+  KYWD_EDID_FORMAT = PLUGIN_EDID_PREFIX + 'kywd_%s';
+const
+  SCRIPT_ITEM_SORTER = 'RobcoAutoSort:ItemSorter';
+const
+  ACTI_NAME_SUFFIX = ' (Auto Sort)';
+  ACTI_ATTX_OVERRIDE = 'Open';
 const
   KYWD_WORKSHOP_SCRAP_FILTER = 'WorkshopRecipeFilterScrap';
-  KYWD_PLUGIN_ACTI = PLUGIN_EDID_PREFIX + 'ActivatorKeyword';
-const
-  SNDR_BUTTON = 'OBJLoadElevatorUtilityButtonPanel';
-  SNDR_SORT = 'DRSMetalMissileHatchOpen';
-  SNDR_PROCESSING = 'OBJTeleporterJammerLP';
-const
-  CONT_TEMP = PLUGIN_EDID_PREFIX + 'Container';
-  CONT_MODULE = PLUGIN_EDID_PREFIX + 'ModuleContainer';
-const
-  QUST_DEBUG = PLUGIN_EDID_PREFIX + 'DebugQuest';
-const
-  SCRIPT_SORTING_CHEST = 'RobcoSmartSort:SortingChest';
-const
-  ACTI_NAME_SUFFIX = ' (Smart Sort)';
-  ACTI_ATTX_OVERRIDE = 'Open';
+
+var KYWD_PLUGIN_ACTI: string;
+var FalloutESM, PluginESP, TargetESP: IInterface;
+var ActivatorGRUP, ConstructableGRUP: IInterface;
+var ActivatorKYWD, WorkshopScrapFilterKYWD: IInterface;
 
 Function FindMainRecord(baseFile: IInterface; grup: string; recordID: string): IInterface;
 begin
@@ -115,25 +104,6 @@ begin
   TargetESP := SelectTargetFile();
 end;
 
-Procedure ResolveIDs();
-var
-  buttonSound, sortSound, processingSound: IInterface;
-begin
-
-  buttonSound := FindMainRecord(FalloutESM, 'SNDR', SNDR_BUTTON);
-  sortSound := FindMainRecord(FalloutESM, 'SNDR', SNDR_SORT);
-  processingSound := FindMainRecord(FalloutESM, 'SNDR', SNDR_PROCESSING);
-
-  TempCONT := BaseName(FindMainRecord(PluginESP, 'CONT', CONT_TEMP));
-  ModuleCONT := BaseName(FindMainRecord(PluginESP, 'CONT', CONT_MODULE));
-
-  DebugQUST := BaseName(FindMainRecord(PluginESP, 'QUST', QUST_DEBUG));
-
-  ButtonSNDR := BaseName(buttonSound);
-  SortSNDR := BaseName(sortSound);
-  ProcessingSNDR := BaseName(processingSound);
-end;
-
 Procedure ResolveGroups();
 begin
   ActivatorGRUP := Add(TargetESP, 'ACTI', false);
@@ -168,22 +138,8 @@ end;
 Procedure AddScripts(sourceContainer: IInterface; targetActivator: IInterface);
 var
   properties: IInterface;
-  openSoundID, closeSoundID: String;
 begin
-
-  openSoundID := GetEditValue(ElementBySignature(sourceContainer, 'SNAM'));
-  closeSoundID := GetEditValue(ElementBySignature(sourceContainer, 'QNAM'));
-
-  properties := AddScript(targetActivator, SCRIPT_SORTING_CHEST);
-
-  AddScriptObjectProperty(properties, 'kOpenSound', openSoundID);
-  AddScriptObjectProperty(properties, 'kCloseSound', closeSoundID);
-  AddScriptObjectProperty(properties, 'kButtonSound', ButtonSNDR);
-  AddScriptObjectProperty(properties, 'kStashSound', SortSNDR);
-  AddScriptObjectProperty(properties, 'kProcessingSound', ProcessingSNDR);
-  AddScriptObjectProperty(properties, 'kTempContainer', TempCONT);
-  AddScriptObjectProperty(properties, 'kModuleContainer', ModuleCONT);
-  AddScriptObjectProperty(properties, 'DebugLog', DebugQUST);
+  properties := AddScript(targetActivator, SCRIPT_ITEM_SORTER);
 end;
 
 Procedure SetEDID(e: IInterface; id: string);
@@ -191,13 +147,45 @@ begin
   SetElementEditValues(e, 'EDID', id);
 end;
 
-Function CopyRecordToTarget(element: IInterface; editorID: string): IInterface;
+
+Function CopyRecordToTarget(element: IInterface; newEditorID: string): IInterface;
 var
   copy: IInterface;
 begin
   copy := wbCopyElementToFile(WinningOverride(element), TargetESP, true, true);
-  SetEDID(copy, editorID);
+  SetEDID(copy, newEditorID);
   Result := copy;
+end;
+
+Function CopyMainRecordIfMissing(element: IInterface; newEditorID: string): IInterface;
+var
+  oldRecord: IInterface;
+begin
+  AddMessage('CopyMainRecordIfMissing');
+  AddMessage('signature: ' + Signature(element));
+  AddMessage('newEditorID: ' + newEditorID);
+  oldRecord := FindMainRecord(TargetESP, Signature(element), newEditorID);
+  AddMessage('old record editor ID: ' + EditorID(oldRecord));
+  if not Assigned(oldRecord) then begin
+    Result := CopyRecordToTarget(element, newEditorID);
+  end
+  else begin
+    Result := oldRecord;
+  end;
+end;
+
+
+Function AddMainRecordIfMissing(groupRecord: IInterface; signature: string; editorID: string): IInterface;
+var
+  oldRecord: IInterface;
+begin
+  oldRecord := FindMainRecord(TargetESP, signature, editorID);
+  if not Assigned(oldRecord) then begin
+    Result := Add(groupRecord, signature, true);
+  end
+  else begin
+    Result := oldRecord;
+  end;
 end;
 
 Procedure LinkConstructableObjectTo(cobj: IInterface; cnam: IInterface);
@@ -212,22 +200,25 @@ Procedure CopyProperties(source: IInterface; target: IInterface);
 begin
   sourceProperties := Properties(source);
   if not Assigned(sourceProperties) then Exit;
-
+  RemoveIfAssigned(target, 'PRPS');
   targetProperties := Add(target, 'PRPS', true);
   for i := 0 to ElementCount(sourceProperties)-1 do begin
     sourceProperty := ElementByIndex(sourceProperties, i);
-    ElementAssign(targetProperties, HighInteger, sourceProperty, false);
+    ElementAssign(targetProperties, HighInteger, sourceProperty, false); // append
   end;
 end;
 
 Function CreateActivatorFromContainer(container: IInterface): IInterface;
 var
+  edid: string;
   activator: IInterface;
 begin
   //AddMessage('Creating new activator: ' + activatorID);
-  activator := Add(ActivatorGRUP, 'ACTI', true);
+  edid := Format(ACTI_EDID_FORMAT, [EditorID(container)]);
+  activator := AddMainRecordIfMissing(ActivatorGRUP, 'ACTI', edid);
   //AddMessage('Activator assigned: ' + IfThen(Assigned(activator), 'True','False'));
-  ApplyEditorID(activator, Format(ACTI_EDID_FORMAT, [EditorID(container)]));
+  CopyRecordHeaderFlags(container, activator);
+  ApplyEditorID(activator, edid);
   ApplyName(activator, GetContainerDisplayName(container) + ACTI_NAME_SUFFIX);
   ApplyActivateTextOverride(activator, ACTI_ATTX_OVERRIDE);
   ApplyDefaultMarkerColor(activator);
@@ -243,30 +234,33 @@ end;
 
 Function Initialize() : integer;
 begin
+  KYWD_PLUGIN_ACTI := Format(KYWD_EDID_FORMAT, ['SortingActivator']);
+  AddMessage('KYWD_PLUGIN_ACTI: ' + KYWD_PLUGIN_ACTI);
+
   ScanForFiles();
-  ResolveIDs();
   ResolveGroups();
   ResolveKeywords();
 end;
 
-Procedure ProcessConstructableFormList(cobj: IInterface; flst: IInterface);
+Procedure ProcessConstructableFormList(sourceCobj: IInterface; sourceFlist: IInterface);
 var
   lnam: IInterface;
-  linkedForm, acti, cont: IInterface;
+  linkedForm, cobj, flst, acti, cont: IInterface;
   lnamEntry: IInterface;
   hasLinkedContainer: boolean;
   i: integer;
 begin
-  lnam := ElementByPath(flst, 'LNAM');
+  lnam := ElementByPath(sourceFlist, 'LNAM');
   hasLinkedContainer := false;
+  AddMessage('Processing constructable form list');
   for i := 0 to ElementCount(lnam) - 1 do begin
     linkedForm := GetLinkedMainRecord(ElementByIndex(lnam, i));
     if Signature(linkedForm) = 'CONT' then hasLinkedContainer := true;
   end;
   if hasLinkedContainer then begin
-    cobj := CopyRecordToTarget(cobj, Format(FLST_EDID_FORMAT, [EditorID(cobj)]));
-    flst := CopyRecordToTarget(flst, Format(FLST_EDID_FORMAT, [EditorID(flst)]));
-    seev(flst, 'FULL', geev(flst, 'FULL') + ACTI_NAME_SUFFIX);
+    cobj := CopyMainRecordIfMissing(sourceCobj, Format(FLST_EDID_FORMAT, [EditorID(sourceCobj)]));
+    flst := CopyMainRecordIfMissing(sourceFlist, Format(FLST_EDID_FORMAT, [EditorID(sourceFlist)]));
+    seev(flst, 'FULL', geev(sourceFlist, 'FULL') + ACTI_NAME_SUFFIX);
     LinkConstructableObjectTo(cobj, flst);
     lnam := ElementByPath(flst, 'LNAM');
     for i := 0 to ElementCount(lnam) - 1 do begin
@@ -285,11 +279,11 @@ function Process(e: IInterface): integer;
 var
   cnam, flist, cont, cobj, acti: IInterface;
 begin
-
   if Signature(e) <> 'COBJ' then Exit;
   cobj := e;
   if HasKeyword(cobj, 'FNAM', WorkshopScrapFilterKYWD) then Exit;
 
+  AddMessage('Processing constructable form list');
   cnam := GetLinkedMainRecord(ElementBySignature(cobj, 'CNAM'));
 
   if Signature(cnam) = 'FLST' then begin
@@ -300,7 +294,7 @@ begin
   if Signature(cnam) = 'CONT' then begin
     cont := cnam;
     acti := CreateActivatorFromContainer(cont);
-    cobj := CopyRecordToTarget(cobj, Format(COBJ_EDID_FORMAT, ['Activator_' + EditorID(cont)]));
+    cobj := CopyMainRecordIfMissing(cobj, Format(COBJ_EDID_FORMAT, ['Activator' + EditorID(cont)]));
     LinkConstructableObjectTo(cobj, acti);
   end;
 end;

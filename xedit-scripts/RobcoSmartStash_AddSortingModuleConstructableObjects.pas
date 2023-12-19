@@ -1,27 +1,27 @@
 unit RobcoSmartStash_AddSortingModuleConstructableObjects;
 
 interface
-uses xEditAPI, xEditExtensions, Classes, SysUtils, StrUtils, Windows, ScriptUtilities;
+uses xEditAPI, xEditExtensions, Classes, SysUtils, StrUtils, Windows;
 
 implementation
 
+var KYWD_WORKBENCH, KYWD_RECIPE_FILTER: string;
 var FalloutESM, PluginESP: IInterface;
 var ConstructableGRUP: IInterface;
 var BottlecapMISC, WorkbenchKYWD, RecipeFilterKYWD: string;
 
 const
   FALLOUT_4_ESM_NAME = 'Fallout4.esm';
-  PLUGIN_ESP_NAME = 'Robco Smart Stash.esp';
+  PLUGIN_ESP_NAME = 'Robco Auto Sort.esp';
 const
-  PLUGIN_EDID_PREFIX = 'robco_smart_sort_';
-  COBJ_EDID_FORMAT = PLUGIN_EDID_PREFIX + 'co_%s';
+  PLUGIN_EDID_PREFIX = 'robco_auto_sort';
+  COBJ_EDID_FORMAT = PLUGIN_EDID_PREFIX + 'cobj_%s';
+  KYWD_EDID_FORMAT = PLUGIN_EDID_PREFIX + 'kywd_%s';
 const
-  ACTI_NAME_SUFFIX = ' (Smart Sort)';
+  ACTI_NAME_SUFFIX = ' (Auto Sort)';
   ACTI_ATTX_OVERRIDE = 'Open';
 const
   MISC_BOTTLECAP = 'Caps001';
-  KYWD_WORKBENCH = PLUGIN_EDID_PREFIX + 'VendingMachineCraftKey';
-  KYWD_RECIPE_FILTER = PLUGIN_EDID_PREFIX + 'SortingModuleRecipeFilter';
 
 Function FindMainRecord(baseFile: IInterface; grup: string; recordID: string): IInterface;
 begin
@@ -79,6 +79,9 @@ end;
 
 Function Initialize() : integer;
 begin
+  KYWD_WORKBENCH := Format(KYWD_EDID_FORMAT, ['CardFabricatorCraftKey']);
+  KYWD_RECIPE_FILTER := Format(KYWD_EDID_FORMAT, ['SortingCardRecipeFilter']);
+
   ScanForFiles();
   ResolveGroups();
   ResolveIDs();
