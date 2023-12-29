@@ -16,16 +16,13 @@ There are two main scripts:
 
 ### CreateSmartSortActivators
 
-This scripts are used to duplicate the containers in an .esm/.esp/.esm file into a Smart Sort activator.
-It automatically attaches the correct scripts and adds properties to the object.
-This script will also create Constructable Objects and FormLists, if appropriate.
-
-If your mod has custom containers, you can run this on your mod plugin file to generate Smart Sort containers for them.
+This scripts are used to duplicate the containers in an .esm/.esp/.esm file into an Auto Sort activator.
+It automatically sets the scripts and properties to the object.
+This script will also create Constructable Objects and FormLists for each object.
 
 ### AddSortingModuleConstructableObjects
 
-If you add a new Sorting Module, run this script on the record to generate a Constructable Object.
-This object will be constructable through the RobCo vending machine.
+If you add a new Sorting Card, run this script on the record to generate a Constructable Object for it.
 
 ## Build steps
 
