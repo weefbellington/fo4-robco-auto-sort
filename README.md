@@ -1,5 +1,5 @@
-# fo4-robco-smart-sort
-Source code for the Robco Smart Sort item sorting mod for Fallout 4.
+# fo4-robco-auto-sort
+Source code for the RobCo Auto Sort item sorting mod for Fallout 4.
 
 ## Requirements
 
@@ -26,6 +26,10 @@ If your mod has custom containers, you can run this on your mod plugin file to g
 
 If you add a new Sorting Module, run this script on the record to generate a Constructable Object.
 This object will be constructable through the RobCo vending machine.
+
+## Build steps
+
+TODO
 
 ## Acknowledgements
 
