@@ -1,35 +1,33 @@
-# fo4-robco-auto-sort
-Source code for the RobCo Auto Sort item sorting mod for Fallout 4.
+### A mod for Fallout 4 by ~weefbellington
+---
+# RobCo Auto Sort - Automated Sorting Containers
 
-## Requirements
+This repository contains the source code for the Robco Auto Sort mod, available on NexusMods: https://www.nexusmods.com/fallout4/mods/77199
 
-- Install the [Fallout 4 Script Extender](https://f4se.silverlock.org/) (F4SE).
-- This project also uses a F4SE extension called [F4DS](https://www.nexusmods.com/fallout4/mods/53089). The .dll and scripts are bundled with the mod.
+This work is free software under the MIT license. You may modify and redistribute it according to your needs, but as a courtesy to the author I ask that you please provide attribution when doing so.
 
-## xEdit tools
-
-Included in the source code are several scripts for xEdit/FO4Edit.
-xEdit uses Delphi (a dialect of Object Pascal) as its scripting language.
-The IDE can be downloaded here: https://www.embarcadero.com/products/rad-studio
-
-There are two main scripts:
-
-### CreateSmartSortActivators
-
-This scripts are used to duplicate the containers in an .esm/.esp/.esm file into an Auto Sort activator.
-It automatically sets the scripts and properties to the object.
-This script will also create Constructable Objects and FormLists for each object.
-
-### AddSortingModuleConstructableObjects
-
-If you add a new Sorting Card, run this script on the record to generate a Constructable Object for it.
-
-## Build steps
-
-TODO
-
-## Acknowledgements
-
-- Many thanks to Kinggath for his [Youtube video tutorial series](https://www.youtube.com/c/kinggath). It's a great entry point into Creation Kit modding.
-- Thank you to mod author DLinny_Lag on NexusMods for his [Fallout 4 Data Structures](https://www.nexusmods.com/fallout4/mods/53089) (F4DS) utility. It's a really great tool for Payprus, which doesn't include data structures out of the box.
-- Shout-out to Sinal for inspiration on creating the vending machine! Check out his [Usable Vending Machines](https://www.nexusmods.com/fallout4/mods/10224) mod, I used it as a reference.
+## How to build the project
+### 1. Dependencies
+- [Fallout 4 Script Extender](https://www.nexusmods.com/fallout4/mods/42147) (F4SE)
+- [Fallout 4 Data Structures](https://www.nexusmods.com/fallout4/mods/53089?tab=files&file_id=245583&nmm=1) (F4DS)
+### 2. Development setup
+- Set the `$FALLOUT4_PATH environment` variable in `robco-auto-sort.code-workspace`.
+- Copy `RobcoAutoSort.esp` to `[Fallout 4/Data]`.
+- Configure paths in `project.ppj` to point to your Fallout 4 directory. This project file is necessary for the papyrus-lang plugin in VSCode to work correctly.
+### 2. Compiling files
+- Run `.compile.ps1` (Powershell script)
+- This script compiles .psc scripts into .pex files and places them in the `build` directory.
+### 3. Building the .ba2 archive
+- Run `archive2.ps1` (Powershell script)
+- This script archives any .pex files in the `[build]` folder into a .ba2.
+- Meshes inside the `[meshes]` folder are also included in the .ba2.
+- The debug archive is output to `[FOMOD/filesets/base/debug]`.
+- The release archive is output to `[FOMOD/filesets/base/release]`.
+- A copy of the debug archive is also output to `[Fallout 4/Data]`.
+### 4. Final steps
+- Copy all .esp files to the appropriate FOMOD fileset
+- Double check that the .ba2 is not missing any scripts
+- Create a .zip from the contents of the FOMOD directory
+- Test the FOMOD installer by using "Install From File" in Vortex
+## Acknowledgments
+Special thanks to mod author DLinnyLag for his Fallout 4 Data Structures (F4DS) project. This mod would not have been possible without his hard work.
