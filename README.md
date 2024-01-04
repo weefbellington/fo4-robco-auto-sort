@@ -17,7 +17,6 @@ This work is free software under the MIT license. You may modify and redistribut
 ### 2. Compiling files
 - Run `.compile.ps1` (Powershell script)
 - This script compiles .psc scripts into .pex files and places them in the `build` directory.
-- It also copies .pex files into the `[Data/Scripts]` directory in your local Fallout 4 game folder.
 ### 3. Building the .ba2 archive
 - Run `archive2.ps1` (Powershell script)
 - This script archives any .pex files in the `[build]` folder into a .ba2.
