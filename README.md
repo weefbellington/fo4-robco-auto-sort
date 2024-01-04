@@ -1,35 +1,55 @@
-# fo4-robco-auto-sort
-Source code for the RobCo Auto Sort item sorting mod for Fallout 4.
+### A mod for Fallout 4 by ~weefbellington
+---
+# RobCo Auto Sort - Automated Sorting Containers
 
-## Requirements
+This repository contains the source code for the Robco Auto Sort mod, available on NexusMods: https://www.nexusmods.com/fallout4/mods/77199
 
-- Install the [Fallout 4 Script Extender](https://f4se.silverlock.org/) (F4SE).
-- This project also uses a F4SE extension called [F4DS](https://www.nexusmods.com/fallout4/mods/53089). The .dll and scripts are bundled with the mod.
+This work is the property of the author. Feel free to use this code as a reference but do not redistribute it without permission (see [License](www.example.com)).
 
-## xEdit tools
-
-Included in the source code are several scripts for xEdit/FO4Edit.
-xEdit uses Delphi (a dialect of Object Pascal) as its scripting language.
-The IDE can be downloaded here: https://www.embarcadero.com/products/rad-studio
-
-There are two main scripts:
-
-### CreateSmartSortActivators
-
-This scripts are used to duplicate the containers in an .esm/.esp/.esm file into an Auto Sort activator.
-It automatically sets the scripts and properties to the object.
-This script will also create Constructable Objects and FormLists for each object.
-
-### AddSortingModuleConstructableObjects
-
-If you add a new Sorting Card, run this script on the record to generate a Constructable Object for it.
-
-## Build steps
-
-TODO
-
-## Acknowledgements
-
-- Many thanks to Kinggath for his [Youtube video tutorial series](https://www.youtube.com/c/kinggath). It's a great entry point into Creation Kit modding.
-- Thank you to mod author DLinny_Lag on NexusMods for his [Fallout 4 Data Structures](https://www.nexusmods.com/fallout4/mods/53089) (F4DS) utility. It's a really great tool for Payprus, which doesn't include data structures out of the box.
-- Shout-out to Sinal for inspiration on creating the vending machine! Check out his [Usable Vending Machines](https://www.nexusmods.com/fallout4/mods/10224) mod, I used it as a reference.
+## How to build the project
+### 1. Dependencies
+- [Fallout 4 Script Extender](https://www.nexusmods.com/fallout4/mods/42147) (F4SE)
+- [Fallout 4 Data Structures](https://www.nexusmods.com/fallout4/mods/53089?tab=files&file_id=245583&nmm=1) (F4DS)
+### 2. Development setup
+- Set the `$FALLOUT4_PATH environment` variable in `robco-auto-sort.code-workspace`.
+- Copy `RobcoAutoSort.esp` to `[Fallout4/Data]`.
+- Copy .psc source files to `[Fallout4/Data/Scripts/Source/User/RobcoAutoSort]`.
+- Copy meshes to `[Fallout4/Data/Meshes/RobcoAutoSort]`.
+- Symlink this folder to `[papyrus-scripts/Data/Scripts/Source/User]` so you don't have to copy source files back and forth.
+### 2. Compiling files
+- Run `.compile.ps1` (Powershell script)
+- This script compiles .psc scripts into .pex files and places them in the `build` directory.
+- It also copies .pex files into the `[Data/Scripts]` directory in your local Fallout 4 game folder.
+### 3. Building the .ba2 archive
+- Run `archive2.ps1` (Powershell script)
+- This script archives any .pex files in the `[build]` folder into a .ba2.
+- Meshes inside the `[meshes]` folder are also included in the .ba2.
+- The debug archive is output to `[FOMOD/filesets/base/debug]`.
+- The release archive is output to `[FOMOD/filesets/base/release]`.
+### 4. Final steps
+- Copy all .esp files to the appropriate FOMOD fileset
+- Double check that the .ba2 is not missing any scripts
+- Create a .zip from the contents of the FOMOD directory
+- Test the FOMOD installer by using "Install From File" in Vortex
+## Project structure
+#### `[build]`
+- `[debug]` - .pex files compiled with no flags
+- `[release]` - .pex files compiled with optimize/release/final flags
+#### [FOMOD]
+- `[filesets]`: files to include for different FOMOD selections
+- `[fomod]`: FOMOD configuration files
+- `[images]`: FOMOD image files
+#### `[meshes]`
+- meshes to include in .ba2
+#### `[papyrus-scripts]`
+- papyrus source files
+#### `[xedit-scripts]`
+- xedit scripts for copying records
+#### `archive2.ps1`
+- archive` build script, assembles .ba2
+#### compile.ps1
+- compile build script, builds .pex from .psc
+#### `robco-auto-sort.code-workspace`
+- VSCode project
+#### `robco-auto-sort.ppj`
+- papyrus project file
