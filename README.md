@@ -1,10 +1,10 @@
-### A mod for Fallout 4 by ~weefbellington
+### A mod for Fallout 4 by ~weefbellington~
 ---
 # RobCo Auto Sort - Automated Sorting Containers
 
 This repository contains the source code for the Robco Auto Sort mod, available on NexusMods: https://www.nexusmods.com/fallout4/mods/77199
 
-This work is the property of the author. Feel free to use this code as a reference but do not redistribute it without permission (see [License](www.example.com)).
+This work is free software under the MIT license. You may modify and redistribute it according to your needs, but as a courtesy to the author I ask that you please provide attribution when doing so.
 
 ## How to build the project
 ### 1. Dependencies
@@ -35,7 +35,7 @@ This work is the property of the author. Feel free to use this code as a referen
 #### `[build]`
 - `[debug]` - .pex files compiled with no flags
 - `[release]` - .pex files compiled with optimize/release/final flags
-#### [FOMOD]
+#### `[FOMOD]`
 - `[filesets]`: files to include for different FOMOD selections
 - `[fomod]`: FOMOD configuration files
 - `[images]`: FOMOD image files
