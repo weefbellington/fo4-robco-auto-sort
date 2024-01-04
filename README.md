@@ -1,4 +1,4 @@
-### A mod for Fallout 4 by ~weefbellington~
+### A mod for Fallout 4 by ~weefbellington
 ---
 # RobCo Auto Sort - Automated Sorting Containers
 
