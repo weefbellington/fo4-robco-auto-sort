@@ -12,10 +12,8 @@ This work is free software under the MIT license. You may modify and redistribut
 - [Fallout 4 Data Structures](https://www.nexusmods.com/fallout4/mods/53089?tab=files&file_id=245583&nmm=1) (F4DS)
 ### 2. Development setup
 - Set the `$FALLOUT4_PATH environment` variable in `robco-auto-sort.code-workspace`.
-- Copy `RobcoAutoSort.esp` to `[Fallout4/Data]`.
-- Copy .psc source files to `[Fallout4/Data/Scripts/Source/User/RobcoAutoSort]`.
-- Copy meshes to `[Fallout4/Data/Meshes/RobcoAutoSort]`.
-- Symlink this folder to `[papyrus-scripts/Data/Scripts/Source/User]` so you don't have to copy source files back and forth.
+- Copy `RobcoAutoSort.esp` to `[Fallout 4/Data]`.
+- Configure paths in `project.ppj` to point to your Fallout 4 directory. This project file is necessary for the papyrus-lang plugin in VSCode to work correctly.
 ### 2. Compiling files
 - Run `.compile.ps1` (Powershell script)
 - This script compiles .psc scripts into .pex files and places them in the `build` directory.
@@ -26,6 +24,7 @@ This work is free software under the MIT license. You may modify and redistribut
 - Meshes inside the `[meshes]` folder are also included in the .ba2.
 - The debug archive is output to `[FOMOD/filesets/base/debug]`.
 - The release archive is output to `[FOMOD/filesets/base/release]`.
+- A copy of the debug archive is also output to `[Fallout 4/Data]`.
 ### 4. Final steps
 - Copy all .esp files to the appropriate FOMOD fileset
 - Double check that the .ba2 is not missing any scripts
