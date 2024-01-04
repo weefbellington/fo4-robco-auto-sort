@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"terminal.integrated.env.windows": {
+			"FALLOUT4_PATH" : "D:\\SteamLibrary\\steamapps\\common\\Fallout 4",
+			"FALLOUT4_SCRIPTS" : "D:\\SteamLibrary\\steamapps\\common\\Fallout 4\\Data\\Scripts",
+			"PAPYRUS_SOURCE_PATH" : ".\\src\\scripts",
+			"MESHES_SOURCE_PATH" : ".\\src\\meshes",
+			"ARCHIVE_OUTPUT_DEBUG" : ".\\FOMOD\\filesets\\Debug\\Data",
+			"ARCHIVE_OUTPUT_RELEASE" : ".\\FOMOD\\filesets\\Debug\\Data"
+		}
+	}
+}

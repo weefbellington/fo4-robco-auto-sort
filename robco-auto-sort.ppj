@@ -1,0 +1,24 @@
+<?xml version='1.0'?>
+<PapyrusProject xmlns="PapyrusProject.xsd">
+    <Scripts>
+        <Script>RobcoAutoSort:Types</Script>
+        <Script>RobcoAutoSort:TraceLogger</Script>
+        <Script>RobcoAutoSort:Util</Script>
+        <Script>RobcoAutoSort:VersionUpdateScript</Script>
+        <Script>RobcoAutoSort:VersionManager</Script>
+        <Script>RobcoAutoSort:FilterRegistry</Script>
+        <Script>RobcoAutoSort:SortingCache</Script>
+        <Script>RobcoAutoSort:Matcher</Script>
+        <Script>RobcoAutoSort:MainController</Script>
+        <Script>RobcoAutoSort:AlternateActivationPerk</Script>
+        <Script>RobcoAutoSort:DumpCacheInfoTerminal</Script>
+        <Script>RobcoAutoSort:ResetCacheTerminal</Script>
+        <Script>RobcoAutoSort:ToggleMatchTracingTerminal</Script>
+        <Script>RobcoAutoSort:FilterCardReader</Script>
+        <Script>RobcoAutoSort:SortingContainer</Script>
+        <Script>RobcoAutoSort:WorkshopMonitor</Script>
+        <Script>RobcoAutoSort:AutoSortActivator</Script>
+        <Script>RobcoAutoSort:UpdateAutoSortActivatorV2</Script>
+        <Script>RobcoAutoSort:UpdateMainControllerV2</Script>
+    </Scripts>
+</PapyrusProject>
