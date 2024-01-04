@@ -6,6 +6,10 @@ This repository contains the source code for the Robco Auto Sort mod, available 
 
 This work is free software under the MIT license. You may modify and redistribute it according to your needs, but as a courtesy to the author I ask that you please provide attribution when doing so.
 
+## Acknowledgments
+
+Special thanks to mod author DLinnyLag for his Fallout 4 Data Structures (F4DS) project. This mod would not have been possible without his hard work.
+
 ## How to build the project
 ### 1. Dependencies
 - [Fallout 4 Script Extender](https://www.nexusmods.com/fallout4/mods/42147) (F4SE)
