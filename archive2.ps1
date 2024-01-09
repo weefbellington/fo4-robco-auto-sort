@@ -4,7 +4,7 @@ $BUILD_PATH = "$PSScriptRoot\build"
 $BUILD_PATH_DEBUG = "$BUILD_PATH\debug"
 $BUILD_PATH_RELEASE = "$BUILD_PATH\release"
 
-$MESHES_PATH = "$PSScriptRoot\meshes"
+$MESHES_PATH = "$PSScriptRoot\Data\Meshes"
 
 $OUTPUT_PATH = "$PSScriptRoot\FOMOD\filesets\base"
 $OUTPUT_PATH_DEBUG = "$OUTPUT_PATH\debug\Data"

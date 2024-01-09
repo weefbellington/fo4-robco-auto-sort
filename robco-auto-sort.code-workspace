@@ -2,11 +2,19 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "D:/SteamLibrary/steamapps/common/Fallout 4/Data/Scripts/Source/User/RobcoAutoSort"
 		}
 	],
 	"settings": {
 		"terminal.integrated.env.windows": {
-			"FALLOUT4_PATH" : "D:\\SteamLibrary\\steamapps\\common\\Fallout 4",
-		}
+			"FALLOUT4_PATH" : "D:/SteamLibrary/steamapps/common/Fallout 4",
+		},
+		"files.exclude": {
+            "**/Data" : true,
+			"**/build" : true,
+			"LICENSE" : true,
+        }
 	}
 }
