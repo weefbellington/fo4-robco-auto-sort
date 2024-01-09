@@ -15,7 +15,7 @@ Group GlobalVariables
 EndGroup
 
 Group ExternalScripts
-    VersionManager property VersionManager = None auto const
+    VersionManager property VersionManager auto const mandatory
     TraceLogger property Logger auto const mandatory
     SortingCache property Cache auto const mandatory
 EndGroup
@@ -51,14 +51,8 @@ EndEvent
 Event Actor.OnPlayerLoadGame(Actor akSender)
     _InitCaches()
     IsMatchTracingEnabled = MatchTracingEnabled.GetValueInt() == 1
-    _CheckForUpdates()
 EndEvent
 
-Function _CheckForUpdates()
-    if VersionManager
-        VersionManager.Update(self)
-    endif
-EndFunction
 
 ; =============================================================================
 ; === Public functions  =======================================================

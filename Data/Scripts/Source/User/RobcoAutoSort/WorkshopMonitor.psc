@@ -11,7 +11,7 @@ Group CacheKeywords
 EndGroup
 
 Group ExternalScripts
-    VersionManager property VersionManager = None auto const
+    VersionManager property VersionManager auto const mandatory
     TraceLogger property Logger auto const mandatory
 EndGroup
 
@@ -36,15 +36,8 @@ Event OnInit()
 EndEvent
 
 Event Actor.OnPlayerLoadGame(Actor akSender)
-    _CheckForUpdates()
     _InitBuffers()
 EndEvent
-
-Function _CheckForUpdates()
-    if VersionManager
-        VersionManager.Update(self)
-    endif
-EndFunction
 
 Function _InitBuffers()
     if (FlushBuffer == None)
@@ -208,7 +201,7 @@ EndFunction
 
 bool Function _RemoveSubscriber(ObjectReference subscriber, ObjectReference workshop)
     int firstIndex = DS:StringDictStringArray.IndexOf(SubscriptionsCacheKey, workshop, subscriber, 0)
-    if (firstIndex > -1)
+    if (firstIndex < 0)
         Logger.Warning(self, "Subscriber not found: " + subscriber)
         return false
     else

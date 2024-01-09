@@ -5,30 +5,11 @@ Scriptname RobcoAutoSort:AlternateActivationPerk extends Perk
 ; =============================================================================
 
 Group ExternalScripts
-    VersionManager property VersionManager = None auto const
+    VersionManager property VersionManager auto const mandatory
     TraceLogger property Logger auto const mandatory
 EndGroup
 
 bool property Locked = false auto hidden
-
-; =============================================================================
-; === Initialization  =========================================================
-; =============================================================================
-
-Event OnInit()
-    RegisterForRemoteEvent(Game.GetPlayer(), "OnPlayerLoadGame")
-    Logger.RegisterPrefix(self, "AlternateActivationPerk")
-EndEvent
-
-Event Actor.OnPlayerLoadGame(Actor akPlayer)
-    _CheckForUpdates()
-EndEvent
-
-Function _CheckForUpdates()
-    if VersionManager
-        VersionManager.Update(self)
-    endif
-EndFunction
 
 ; =============================================================================
 ; === Events  =================================================================

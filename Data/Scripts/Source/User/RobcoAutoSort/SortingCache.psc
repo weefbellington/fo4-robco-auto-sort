@@ -4,10 +4,8 @@ Scriptname RobcoAutoSort:SortingCache extends Quest
 ; === Properties  =============================================================
 ; =============================================================================
 
-int property CurrentScriptVersion = 1 auto hidden
-
 Group ExternalScripts
-    VersionManager property VersionManager = None auto const
+    VersionManager property VersionManager auto const mandatory
     TraceLogger property Logger auto const mandatory
     FilterRegistry property FilterRegistry auto const mandatory
 EndGroup
@@ -30,18 +28,7 @@ string LogPrefix = "[SortingCache] " const
 Event OnInit()
     Logger.RegisterPrefix(self, "SortingCache")
     ResetAllCaches()
-    RegisterForRemoteEvent(Game.GetPlayer(), "OnPlayerLoadGame")
 EndEvent
-
-Event Actor.OnPlayerLoadGame(Actor akSender)
-    _CheckForUpdates()
-EndEvent
-
-Function _CheckForUpdates()
-    if VersionManager
-        VersionManager.Update(self)
-    endif
-EndFunction
 
 ; =============================================================================
 ; === Public functions  =======================================================
@@ -115,8 +102,7 @@ Function DeleteCache(Keyword cacheID)
     Types:Filter filter = FilterRegistry.FilterForCacheID(cacheID)
     Logger.Info(self, "Deleting cache: " + filter.DisplayTitle)
 
-    bool deleted = DS:IntDictInt.Create(cacheID)
-    DS:IntDictInt.Delete(cacheID)
+    bool deleted = DS:IntDictInt.Delete(cacheID)
     if (deleted)
         Logger.Info(self, "Delete cache succeeded:" + filter.DisplayTitle)
     else

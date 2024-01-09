@@ -1,4 +1,4 @@
-Scriptname RobcoAutoSort:Util
+Scriptname RobcoAutoSort:Util Const Hidden
 
 ; =============================================================================
 ; === Public global functions  ================================================

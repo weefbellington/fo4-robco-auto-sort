@@ -9,17 +9,10 @@ Group FormLists
 EndGroup
 
 Group ExternalScripts
-    VersionManager property VersionManager = None auto const
+    VersionManager property VersionManager auto const mandatory
     TraceLogger property Logger auto const mandatory
     SortingCache property Cache auto const mandatory
 EndGroup
-
-; =============================================================================
-; === Constants  ==============================================================
-; =============================================================================
-
-string LogFilename = "Robco Auto Sort" const
-string LogPrefix = "[DumpCacheInfoTerminal] " const
 
 ; =============================================================================
 ; === Initialization  =========================================================
@@ -27,18 +20,7 @@ string LogPrefix = "[DumpCacheInfoTerminal] " const
 
 Event OnInit()
     Logger.RegisterPrefix(self, "DumpCacheInfoTerminal")
-    RegisterForRemoteEvent(Game.GetPlayer(), "OnPlayerLoadGame")
 EndEvent
-
-Event Actor.OnPlayerLoadGame(Actor akPlayer)
-    _CheckForUpdates()
-EndEvent
-
-Function _CheckForUpdates()
-    if VersionManager
-        VersionManager.Update(self)
-    endif
-EndFunction
 
 ; =============================================================================
 ; === Events  =================================================================

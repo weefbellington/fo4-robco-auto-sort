@@ -25,7 +25,8 @@ EndEvent
 ; =============================================================================
 
 Function RegisterPrefix(ScriptObject caller, String prefix)
-    DS:StringDictString.Add(LogPrefixCacheKey, caller, prefix)
+    DS:StringDictString.Create(LogPrefixCacheKey)
+    DS:StringDictString.Set(LogPrefixCacheKey, caller, prefix)
 EndFunction
 
 Function Info(ScriptObject caller, string msg, bool condition=true, bool notification=false) DebugOnly

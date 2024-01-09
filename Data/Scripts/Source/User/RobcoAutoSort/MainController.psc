@@ -4,8 +4,6 @@ Scriptname RobcoAutoSort:MainController extends Quest
 ; === Properties  =============================================================
 ; =============================================================================
 
-int property CurrentScriptVersion = 1 auto hidden
-
 Group Perks
     Perk[] property AddPerks auto const mandatory
 EndGroup
@@ -15,7 +13,7 @@ Group GlobalVariables
 EndGroup
 
 Group ExternalScripts
-    VersionManager property VersionManager = None auto const
+    VersionManager property VersionManager auto const mandatory
     TraceLogger property Logger auto const mandatory
 EndGroup
 
@@ -34,14 +32,8 @@ EndEvent
 
 Event Actor.OnPlayerLoadGame(Actor akSender)
     _InitLogging()
-    _CheckForUpdates()
 EndEvent
 
-Function _CheckForUpdates()
-    if VersionManager
-        VersionManager.Update(self)
-    endif
-EndFunction
 
 ; =============================================================================
 ; === Private functions  ======================================================

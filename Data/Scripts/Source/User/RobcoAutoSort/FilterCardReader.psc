@@ -17,7 +17,7 @@ Group Messages
 EndGroup
 
 Group ExternalScripts
-    VersionManager property VersionManager = None auto const
+    VersionManager property VersionManager auto const mandatory
     TraceLogger property Logger auto const mandatory
     FilterRegistry property FilterRegistry auto const mandatory
 EndGroup
@@ -48,21 +48,12 @@ Event OnInit()
     Logger.RegisterPrefix(self, "FilterCardReader")
     _InitVariables()
     AddInventoryEventFilter(None)
-    RegisterForMenuOpenCloseEvent("ContainerMenu")
-    RegisterForRemoteEvent(Player, "OnPlayerLoadGame")
 EndEvent
-
-Event Actor.OnPlayerLoadGame(Actor akPlayer)
-    _CheckForUpdates()
-EndEvent
-
-Function _CheckForUpdates()
-    VersionManager.Update(self)
-EndFunction
 
 ; =============================================================================
 ; === Events  =================================================================
 ; =============================================================================
+
 
 Event OnItemAdded(Form akBaseItem, int aiItemCount, ObjectReference akItemReference, ObjectReference akSourceContainer)
     _TraceItemAdded(akBaseItem, akItemReference)
@@ -103,6 +94,7 @@ EndEvent
 
 Function BindTo(AutoSortActivator binder)
     AttachTo(binder)
+    VersionManager.Register(self)
 EndFunction
 
 Function DeleteWhenAble()
@@ -118,6 +110,7 @@ Function Delete()
 EndFunction
 
 Function _Cleanup()
+    VersionManager.Unregister(self)
     RemoveAllItems(akTransferTo=Player)
     Player = None
     UnregisterForAllEvents()

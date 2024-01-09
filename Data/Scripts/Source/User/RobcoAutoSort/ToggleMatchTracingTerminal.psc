@@ -4,14 +4,12 @@ Scriptname RobcoAutoSort:ToggleMatchTracingTerminal extends Terminal
 ; === Const propeties  ========================================================
 ; =============================================================================
 
-int property CurrentScriptVersion = 1 auto hidden
-
 Group GlobalVariables
     GlobalVariable property MatchTracingEnabled auto const mandatory
 EndGroup
 
 Group ExternalScripts
-    VersionManager property VersionManager = None auto const
+    VersionManager property VersionManager auto const mandatory
     TraceLogger property Logger auto const mandatory
     Matcher property Matcher auto const mandatory
 EndGroup
@@ -24,16 +22,6 @@ Event OnInit()
     Logger.RegisterPrefix(self, "ToggleMatchTracingTerminal")
     RegisterForRemoteEvent(Game.GetPlayer(), "OnPlayerLoadGame")
 EndEvent
-
-Event Actor.OnPlayerLoadGame(Actor akSender)
-    _CheckForUpdates()
-EndEvent
-
-Function _CheckForUpdates()
-    if VersionManager
-        VersionManager.Update(self)
-    endif
-EndFunction
 
 ; =============================================================================
 ; === Events  =================================================================

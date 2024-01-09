@@ -32,7 +32,7 @@ Group Terminals
 EndGroup
 
 Group ExternalScripts
-    VersionManager property VersionManager = None auto const
+    VersionManager property VersionManager auto const mandatory
     TraceLogger property Logger auto const mandatory
     FilterRegistry property FilterRegistry auto const mandatory
 EndGroup
@@ -75,18 +75,7 @@ Event OnInit()
     Player = Game.GetPlayer()
     AddKeyword(MissingFilterKeyword)
     AddInventoryEventFilter(None)
-    RegisterForRemoteEvent(Game.GetPlayer(), "OnPlayerLoadGame")
 EndEvent
-
-Event Actor.OnPlayerLoadGame(Actor akPlayer)
-    _CheckForUpdates()
-EndEvent
-
-Function _CheckForUpdates()
-    if VersionManager
-        VersionManager.Update(self)
-    endif
-EndFunction
 
 ; =============================================================================
 ; === Events ==================================================================
@@ -299,6 +288,7 @@ Function OpenSortingContainer()
 
     SortingContainer.SetDisplayName(ContainerDisplayName)
     Sound.StopInstance(loopSoundID)
+    
     SortingContainer.Activate(Player)
     
     _EndProcessingState()
@@ -353,7 +343,6 @@ EndFunction
 ; -----------------------------------------------------------------------------
 Function OpenHelpTerminal()
     Logger.Info(self, "Opening help terminal")
-
     HelpTerminal.ShowOnPipboy()
 EndFunction
 
@@ -366,9 +355,11 @@ Function _Setup(ObjectReference akWorkshop)
     Workshop = akWorkshop
     _CreateContainers()
     _RegisterForEvents()
+    VersionManager.Register(self)
 EndFunction
 
 Function _Cleanup()
+    VersionManager.Unregister(self)
     UnregisterForAllEvents()
     _DestroyContainers()
     Player = None
@@ -450,7 +441,16 @@ bool Function _IsInProcessingState()
     return GetState() == "Processing"
 EndFunction
 
+Function _ReregisterAllEvents()
+    _RegisterForEvents()
+    CardReader.RegisterForMenuOpenCloseEvent("ContainerMenu")
+    CardReader.BindTo(self)
+    SortingContainer.BindTo(self)
+EndFunction
+
 Function _GoToProcessingState()
+    _ReregisterAllEvents()
+
     GotoState("Processing")
     BlockActivation(true, abHideActivateText=true)
 EndFunction

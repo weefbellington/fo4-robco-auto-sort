@@ -6,8 +6,6 @@ import RobcoAutoSort:Types
 ; === Properties  =============================================================
 ; =============================================================================
 
-int property CurrentScriptVersion = 1 auto hidden
-
 Group CacheKeywords
     Keyword property SortedItemsCacheKey auto const mandatory
 EndGroup
@@ -21,7 +19,7 @@ Group Messages
 EndGroup
 
 Group ExternalScripts
-    VersionManager property VersionManager = None auto const
+    VersionManager property VersionManager auto const mandatory
     TraceLogger property Logger auto const mandatory
     Matcher property Matcher auto const mandatory
     WorkshopMonitor property WorkshopMonitor auto const mandatory
@@ -51,16 +49,6 @@ Event OnInit()
     _CreateSortedItemArray()
 EndEvent
 
-Event Actor.OnPlayerLoadGame(Actor akSender)
-    _CheckForUpdates()
-EndEvent
-
-Function _CheckForUpdates()
-    if VersionManager
-        VersionManager.Update(self)
-    endif
-EndFunction
-
 ; =============================================================================
 ; === Override functions ======================================================
 ; =============================================================================
@@ -78,6 +66,7 @@ Function DeleteWhenAble()
 EndFunction
 
 Function _Cleanup()
+    VersionManager.Unregister(self)
     UnregisterForAllEvents()
     WorkshopMonitor.UnregisterForWorkshopUpdates(self, Workshop)
     Player = None
@@ -97,6 +86,7 @@ Function BindTo(AutoSortActivator binder)
     Workshop = binder.Workshop
     CardReader = binder.CardReader
     WorkshopMonitor.RegisterForWorkshopUpdates(self, Workshop)
+    VersionManager.Register(self)
 EndFunction
 
 Function SetDisplayName(string displayName)
