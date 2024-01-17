@@ -10,10 +10,12 @@ This work is free software under the MIT license. You may modify and redistribut
 ### 1. Dependencies
 - [Fallout 4 Script Extender](https://www.nexusmods.com/fallout4/mods/42147) (F4SE)
 - [Fallout 4 Data Structures](https://www.nexusmods.com/fallout4/mods/53089?tab=files&file_id=245583&nmm=1) (F4DS)
-### 2. Development setup
-- Set the `$FALLOUT4_PATH environment` variable in `robco-auto-sort.code-workspace`.
-- Copy `RobcoAutoSort.esp` to `[Fallout 4/Data]`.
-- Configure paths in `project.ppj` to point to your Fallout 4 directory. This project file is necessary for the papyrus-lang plugin in VSCode to work correctly.
+### 2. Development environment setup
+- Ensure that Archive2 and PapyrusCompiler are set on your system's path.
+- Set the `$FALLOUT4_PATH` environment variable in `robco-auto-sort.code-workspace`.
+- Copy or symlink `./RobcoAutoSort.esp` to `<Path:Fallout4>/Data`.
+- Copy or symlink `./Data/Scripts/Source/User/RobcoAutoSort` to `<Path:Fallout4>/Data/Scripts/User`.
+- Copy or symlink `./Data/Meshes/RobcoAutoSort` to `<Path:Fallout4>/Data/Meshes`.
 ### 2. Compiling files
 - Run `.compile.ps1` (Powershell script)
 - This script compiles .psc scripts into .pex files and places them in the `build` directory.
